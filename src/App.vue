@@ -1,6 +1,6 @@
 <template>
   <div>
-    heimama
+    <router-view />
   </div>
 </template>
 
