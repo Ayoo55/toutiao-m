@@ -35,7 +35,14 @@ const routes = [
         component: ()=> import('@/views/my')
       },
     ]
-  }
+  },
+  // 搜索路由
+  {
+    path:'/search',
+    name:'search',
+    component: ()=> import('@/views/search')
+  },
+ 
 ]
 
 const router = new VueRouter({

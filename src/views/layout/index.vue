@@ -4,7 +4,7 @@
     <router-view />
     <!-- 标签导航栏 -->
     <van-tabbar v-model="active" class="layout-tabbar" router>
-        <van-tabbar-item icon="home-o" to="home">
+        <van-tabbar-item icon="home-o" to="/">
             <i slot="icon" class="toutiao toutiao-shouye"></i>
             <span class="text">首页</span>
         </van-tabbar-item>
