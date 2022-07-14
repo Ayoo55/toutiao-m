@@ -28,28 +28,50 @@
 
         <!-- 用户信息 -->
         <van-cell class="user-info" center :border="false">
-          <van-image
-            class="avatar"
-            slot="icon"
-            round
-            fit="cover"
-            :src="article.aut_photo"
-          />
-          <div slot="title" class="user-name">{{article.aut_name}}</div>
-          <div slot="label" class="publish-date">{{article.pubdate | relativeTime}}</div>
-          <van-button
+            <van-image
+                class="avatar"
+                slot="icon"
+                round
+                fit="cover"
+                :src="article.aut_photo"
+            />
+            <div slot="title" class="user-name">{{article.aut_name}}</div>
+            <div slot="label" class="publish-date">{{article.pubdate | relativeTime}}</div>
+            
+            <!-- 
+                :isFollowed="article.is_followed"
+                @up
+                用 v-model 替换
+            -->
+
+            <FollowUser 
             class="follow-btn"
-            type="info"
-            color="#3296fa"
-            round
-            size="small"
-            icon="plus"
-          >关注</van-button>
-          <!-- <van-button
-            class="follow-btn"
-            round
-            size="small"
-          >已关注</van-button> -->
+            :userId="article.aut_id"
+            v-model="article.is_followed"
+            ></FollowUser>
+            <!-- 已关注 is_followed 为 true -->
+            <!-- <van-button
+                v-if="article.is_followed"
+                class="follow-btn"
+                round
+                size="small"
+                @click="onFollow"
+                :loading="followLoading"
+            >已关注</van-button> -->
+
+            <!-- 未关注 -->
+            <!-- <van-button
+                v-else
+                class="follow-btn"
+                type="info"
+                color="#3296fa"
+                round
+                size="small"
+                icon="plus"
+                @click="onFollow"
+                :loading="followLoading"
+            >关注</van-button> -->
+          
         </van-cell>
         <!-- /用户信息 -->
 
@@ -60,6 +82,41 @@
         ref="article-content"
         ></div>
         <van-divider>正文结束</van-divider>
+
+        <!-- 文章评论 -->
+        <CommentList :source="article.art_id"></CommentList>
+        <!-- 文章评论 -->
+
+
+         <!-- 底部区域 -->
+        <div class="article-bottom">
+            <van-button
+                class="comment-btn"
+                type="default"
+                round
+                size="small"
+            >写评论</van-button>
+            <van-icon
+                name="comment-o"
+                badge="123"
+                color="#777"
+            />
+            <!-- <van-icon
+                color="#777"
+                name="star-o"
+            /> -->
+            <CollectArticle v-model="article.is_collected" 
+            :articleId="article.art_id"></CollectArticle>
+
+            <!-- <van-icon
+                color="#777"
+                name="good-job-o"
+            /> -->
+            <LikeArticle v-model="article.attitude" 
+            :articleId="article.art_id"></LikeArticle>
+            <van-icon name="share" color="#777777"></van-icon>
+        </div>
+        <!-- /底部区域 -->
       </div>
       <!-- /加载完成-文章详情 -->
 
@@ -79,42 +136,26 @@
       <!-- /加载失败：其它未知错误（例如网络原因或服务端异常） -->
     </div>
 
-    <!-- 底部区域 -->
-    <div class="article-bottom">
-      <van-button
-        class="comment-btn"
-        type="default"
-        round
-        size="small"
-      >写评论</van-button>
-      <van-icon
-        name="comment-o"
-        badge="123"
-        color="#777"
-      />
-      <van-icon
-        color="#777"
-        name="star-o"
-      />
-      <van-icon
-        color="#777"
-        name="good-job-o"
-      />
-      <van-icon name="share" color="#777777"></van-icon>
-    </div>
-    <!-- /底部区域 -->
+   
   </div>
 </template>
 
 <script>
 import {getArticlesById} from '@/api/article'
 import { ImagePreview } from 'vant'
-
-
+import FollowUser from '@/components/follow-user'
+import CollectArticle from '@/components/collect-article'
+import LikeArticle from '@/components/like-item'
+import CommentList from './components/comment-list.vue'
 
 export default {
   name: 'ArticleIndex',
-  components: {},
+  components: {
+    FollowUser,
+    CollectArticle,
+    LikeArticle,
+    CommentList
+  },
   props: {
     articleId: {
       type: [Number, String],
@@ -125,7 +166,7 @@ export default {
     return {
         article:{},
         loading:true,
-        errStatus:0
+        errStatus:0,
     }
   },
   computed: {},
@@ -167,7 +208,7 @@ export default {
     // 点击图片预览
     previewImage(){
         // 获取DOM节点
-        const articleContent = this.$refs('article-content')
+        const articleContent = this.$refs['article-content']
         // 获取所有 img  节点
         const imgs = articleContent.querySelectorAll('img')
         // 空数组储存 img 的地址
@@ -184,7 +225,9 @@ export default {
             }
         });
        
-    }
+    },
+
+
   }
 }
 </script>
@@ -256,7 +299,7 @@ export default {
     align-items: center;
     justify-content: center;
     background-color: #fff;
-    .van-icon {
+    /deep/.van-icon {
       font-size: 122px;
       color: #b4b4b4;
     }

@@ -35,3 +35,23 @@ export const getUserChannels = () => {
         // headers:{Authorization:`Bearer ${store.state.user.token}`}
     })
 }
+
+// 关注用户
+export const addFollow = (target) => {
+    return request({
+        url:`/v1_0/user/followings`,
+        method:'post',
+        data:{
+            target
+        }
+    })
+}
+
+// 取消关注用户
+export const deleteFollow = (target) => {
+    return request({
+        url:`/v1_0/user/followings/${target}`,
+        method:'delete',
+        
+    })
+}
