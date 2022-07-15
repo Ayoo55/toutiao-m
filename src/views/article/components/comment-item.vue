@@ -37,6 +37,7 @@
 <script>
 import { addCommentLike, deleteCommentLike } from '@/api/comment'
 
+
 export default {
   name: 'CommentItem',
   components: {},
@@ -53,7 +54,9 @@ export default {
   },
   computed: {},
   watch: {},
-  created () {},
+  created () {
+    this.onCommentLike()
+  },
   mounted () {},
   methods: {
     async onCommentLike () {

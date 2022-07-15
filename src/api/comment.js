@@ -28,3 +28,13 @@ export const deleteCommentLike = target =>{
         
     })
 }
+
+
+// 对文章或者评论进行评论
+export const addComment = data =>{
+    return request({
+        url:`/v1_0/comments`,
+        method:'post',
+        data
+    })
+}

@@ -87,6 +87,7 @@
         <CommentList 
             :source="article.art_id"
             @onload-success="totalCommentCount=$event.total_count"
+            :list="commentList"
         ></CommentList>
         <!-- 文章评论 -->
 
@@ -98,6 +99,7 @@
                 type="default"
                 round
                 size="small"
+                @click="isPostShow=true"
             >写评论</van-button>
             <van-icon
                 name="comment-o"
@@ -120,6 +122,20 @@
             <van-icon name="share" color="#777777"></van-icon>
         </div>
         <!-- /底部区域 -->
+
+        <!-- 发布评论 -->
+        <van-popup 
+            v-model="isPostShow" 
+            position="bottom"  
+        >
+            <!-- 评论组件 -->
+            <CommentPost 
+                :target="article.art_id"
+                @onPost="onPostSuccess"
+            ></CommentPost>
+        </van-popup>
+        <!-- 发布评论 -->
+
       </div>
       <!-- /加载完成-文章详情 -->
 
@@ -150,6 +166,7 @@ import FollowUser from '@/components/follow-user'
 import CollectArticle from '@/components/collect-article'
 import LikeArticle from '@/components/like-item'
 import CommentList from './components/comment-list.vue'
+import CommentPost from './components/comment-post.vue'
 
 export default {
     name: 'ArticleIndex',
@@ -157,7 +174,8 @@ export default {
         FollowUser,
         CollectArticle,
         LikeArticle,
-        CommentList
+        CommentList,
+        CommentPost
     },
     props: {
         articleId: {
@@ -170,7 +188,9 @@ export default {
             article:{},
             loading:true,
             errStatus:0,
-            totalCommentCount:0
+            totalCommentCount:0,
+            isPostShow:false,
+            commentList:[]
         }
     },
     computed: {},
@@ -230,6 +250,13 @@ export default {
             });
         
         },
+
+        // 关闭评论弹出层，将发布内容显示到列表顶部
+        onPostSuccess(data){
+            this.isPostShow = false
+            this.commentList.unshift(data.new_obj)
+
+        }
     }
 }
 </script>

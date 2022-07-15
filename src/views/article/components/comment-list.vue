@@ -26,7 +26,6 @@ export default {
 
     data () {
         return {
-            list: [],
             loading: false,
             finished: false,
             offset:null,
@@ -43,6 +42,10 @@ export default {
         source:{
             type:[Number,String,Object],
             required:true
+        },
+        list:{
+            type:Array,
+            default:()=>[]
         }
     },
 
