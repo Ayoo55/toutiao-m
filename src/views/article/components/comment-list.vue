@@ -1,18 +1,25 @@
+<!-- 评论列表组件 -->
 <template>
    <van-list
         v-model="loading"
         :finished="finished"
         finished-text="没有更多了"
         @load="onLoad"
+        :error.sync="error"
+        error-text="请求失败，点击重新加载"
     >
-        <van-cell 
-            v-for="(item,index) in list" :key="index" 
-            :title="item.content" />
+        <CommentItem
+        v-for="(item,index) in list" :key="index"
+        :comment="item"></CommentItem>
+        <!-- <van-cell 
+            
+            :title="item.content" /> -->
     </van-list>
     </template>
 
 <script>
 import {getComments} from '@/api/comment'
+import CommentItem from './comment-item.vue'
 export default {
 
     name: 'CommentList',
@@ -23,11 +30,14 @@ export default {
             loading: false,
             finished: false,
             offset:null,
-            limit:10
+            limit:10,
+            error: false,
         };
     },
 
-    components: {},
+    components: {
+        CommentItem
+    },
 
     props: {
         source:{
@@ -41,16 +51,25 @@ export default {
     methods: {
         async onLoad() {
             try{
+                // 获取请求数据
                 const {data} = await getComments({
                     type:'a',
                     source:this.source,
                     offset:this.offset,
                     limit:this.limit
                 })
+
+                // 将数据添加到列表中
                 const {results} = data.data
                 this.list.push(...results)
+
+                // 文章评论数据传出
+                this.$emit('onload-success',data.data)
+
+                // loading 加载状态设为 false
                 this.loading = false
 
+                // 判断是否还有数据，有就更新获取下一页的数据页码
                 if(results.length){
                     this.offset = data.data.last_id
                 }
@@ -59,13 +78,15 @@ export default {
                 }
             }
             catch(err){
-                console.log('获取评论失败，请稍后重试',err);
+                this.error = true
+                this.loading = false
             }
         },
 
     },
 
     created () {
+        this.onLoad()
     },
 
     watch: {},

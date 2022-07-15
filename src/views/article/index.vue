@@ -84,7 +84,10 @@
         <van-divider>正文结束</van-divider>
 
         <!-- 文章评论 -->
-        <CommentList :source="article.art_id"></CommentList>
+        <CommentList 
+            :source="article.art_id"
+            @onload-success="totalCommentCount=$event.total_count"
+        ></CommentList>
         <!-- 文章评论 -->
 
 
@@ -98,7 +101,7 @@
             >写评论</van-button>
             <van-icon
                 name="comment-o"
-                badge="123"
+                :badge="totalCommentCount"
                 color="#777"
             />
             <!-- <van-icon
@@ -149,86 +152,85 @@ import LikeArticle from '@/components/like-item'
 import CommentList from './components/comment-list.vue'
 
 export default {
-  name: 'ArticleIndex',
-  components: {
-    FollowUser,
-    CollectArticle,
-    LikeArticle,
-    CommentList
-  },
-  props: {
-    articleId: {
-      type: [Number, String],
-      required: true
-    }
-  },
-  data () {
-    return {
-        article:{},
-        loading:true,
-        errStatus:0,
-    }
-  },
-  computed: {},
-  watch: {},
-  created () {
-    this.loadArticle()
-  },
-  mounted () {},
-  methods: {
-    // 加载文章内容
-    async loadArticle(){
-        // 处于加载状态
-        this.loading = true
-        try{
-            const {data} = await getArticlesById(this.articleId)
-            console.log(data);
-            // if(Math.random()>0.5){
-            //     JSON.parse('alksdagioj')
-            // }
-
-            this.article = data.data
-
-            setTimeout(()=>{
-                this.previewImage()
-            },0)
-            
-        }
-        catch(err){
-            // 判断err类型
-            if(err.response && err.response.status === 404){
-                this.errStatus = 404
-            }
-            console.log('获取数据失败',err);
-        }
-        this.loading = false
-
+    name: 'ArticleIndex',
+    components: {
+        FollowUser,
+        CollectArticle,
+        LikeArticle,
+        CommentList
     },
-    
-    // 点击图片预览
-    previewImage(){
-        // 获取DOM节点
-        const articleContent = this.$refs['article-content']
-        // 获取所有 img  节点
-        const imgs = articleContent.querySelectorAll('img')
-        // 空数组储存 img 的地址
-        const images = []
-        // 遍历 img 节点，得到 img 的地址，添加到数组中
-        imgs.forEach((img,index) => {
-            images.push(img.src)
-            // 遍历图片的同时，完成图片点击事件，增加图片预览效果
-            img.onclick = ()=>{
-                ImagePreview({
-                    images,
-                    startPosition: index,
-                });
-            }
-        });
-       
+    props: {
+        articleId: {
+        type: [Number, String],
+        required: true
+        }
     },
+    data () {
+        return {
+            article:{},
+            loading:true,
+            errStatus:0,
+            totalCommentCount:0
+        }
+    },
+    computed: {},
+    watch: {},
+    created () {
+        this.loadArticle()
+    },
+    mounted () {},
+    methods: {
+        // 加载文章内容
+        async loadArticle(){
+            // 处于加载状态
+            this.loading = true
+            try{
+                const {data} = await getArticlesById(this.articleId)
+                console.log(data);
+                // if(Math.random()>0.5){
+                //     JSON.parse('alksdagioj')
+                // }
 
+                this.article = data.data
 
-  }
+                setTimeout(()=>{
+                    this.previewImage()
+                },0)
+                
+            }
+            catch(err){
+                // 判断err类型
+                if(err.response && err.response.status === 404){
+                    this.errStatus = 404
+                }
+                console.log('获取数据失败',err);
+            }
+            this.loading = false
+
+        },
+        
+        // 点击图片预览
+        previewImage(){
+            // 获取DOM节点
+            const articleContent = this.$refs['article-content']
+            // 获取所有 img  节点
+            const imgs = articleContent.querySelectorAll('img')
+            // 空数组储存 img 的地址
+            const images = []
+            // 遍历 img 节点，得到 img 的地址，添加到数组中
+            imgs.forEach((img,index) => {
+                images.push(img.src)
+                // 遍历图片的同时，完成图片点击事件，增加图片预览效果
+                img.onclick = ()=>{
+                    ImagePreview({
+                        images,
+                        startPosition: index,
+                    });
+                }
+            });
+        
+        },
+    }
 }
 </script>
 

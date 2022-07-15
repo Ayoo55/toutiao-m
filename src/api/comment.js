@@ -8,3 +8,23 @@ export const getComments = params =>{
         params
     })
 }
+
+// 对评论点赞
+export const addCommentLike = target =>{
+    return request({
+        url:'/v1_0/comment/likings',
+        method:'post',
+        data:{
+            target
+        }
+    })
+}
+
+// 取消评论点赞
+export const deleteCommentLike = target =>{
+    return request({
+        url:`/v1_0/comment/likings/${target}`,
+        method:'delete',
+        
+    })
+}
