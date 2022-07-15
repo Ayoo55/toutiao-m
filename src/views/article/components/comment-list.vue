@@ -7,10 +7,13 @@
         @load="onLoad"
         :error.sync="error"
         error-text="请求失败，点击重新加载"
+        :immediate-check="false"
     >
         <CommentItem
         v-for="(item,index) in list" :key="index"
-        :comment="item"></CommentItem>
+        :comment="item"
+        @reply-click="$emit('reply-click',$event)"
+        ></CommentItem>
         <!-- <van-cell 
             
             :title="item.content" /> -->
@@ -46,6 +49,13 @@ export default {
         list:{
             type:Array,
             default:()=>[]
+        },
+        type:{
+            type:String,
+            validator(value){
+                return ['a','c'].includes(value)
+            },
+            default:'a'
         }
     },
 
@@ -56,8 +66,8 @@ export default {
             try{
                 // 获取请求数据
                 const {data} = await getComments({
-                    type:'a',
-                    source:this.source,
+                    type:this.type,
+                    source:this.source.toString(),
                     offset:this.offset,
                     limit:this.limit
                 })
@@ -89,6 +99,7 @@ export default {
     },
 
     created () {
+        this.loading=true
         this.onLoad()
     },
 

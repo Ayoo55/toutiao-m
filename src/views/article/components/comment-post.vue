@@ -50,7 +50,7 @@ export default {
                 const {data} = await addComment({
                     target:this.target,   //对文章评论，传文章id
                     content:this.message,
-                    art_id:null
+                    art_id:this.articleId ? this.articleId.toString() : this.articleId
                 })
                 console.log(data)
 

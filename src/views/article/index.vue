@@ -88,6 +88,7 @@
             :source="article.art_id"
             @onload-success="totalCommentCount=$event.total_count"
             :list="commentList"
+            @reply-click="onReplyShow"
         ></CommentList>
         <!-- 文章评论 -->
 
@@ -155,6 +156,19 @@
       <!-- /加载失败：其它未知错误（例如网络原因或服务端异常） -->
     </div>
 
+    <!-- 评论回复弹层 -->
+        <van-popup 
+            v-model="isReplyShow" 
+            position="bottom" 
+            style="height:100%" 
+        >
+          <CommentReply 
+            v-if="isReplyShow"
+            :comment="currentComment"
+            @close="isReplyShow=false"
+          ></CommentReply>
+        </van-popup>
+    <!-- 评论回复弹层 -->
    
   </div>
 </template>
@@ -167,6 +181,7 @@ import CollectArticle from '@/components/collect-article'
 import LikeArticle from '@/components/like-item'
 import CommentList from './components/comment-list.vue'
 import CommentPost from './components/comment-post.vue'
+import CommentReply from './components/comment-reply.vue'
 
 export default {
     name: 'ArticleIndex',
@@ -175,7 +190,14 @@ export default {
         CollectArticle,
         LikeArticle,
         CommentList,
-        CommentPost
+        CommentPost,
+        CommentReply
+    },
+    provide:function(){
+        return {
+            articleId : this.articleId
+        }
+        
     },
     props: {
         articleId: {
@@ -190,7 +212,10 @@ export default {
             errStatus:0,
             totalCommentCount:0,
             isPostShow:false,
-            commentList:[]
+            isReplyShow:false,
+            commentList:[],
+            currentComment:{} //当前评论
+            
         }
     },
     computed: {},
@@ -256,6 +281,13 @@ export default {
             this.isPostShow = false
             this.commentList.unshift(data.new_obj)
 
+        },
+
+        // 点击“回复”，显示弹层
+        onReplyShow(data){
+            console.log(data);
+            this.currentComment = data
+            this.isReplyShow = true
         }
     }
 }
