@@ -68,7 +68,6 @@ export default {
             }
         },
         onPickerChange(picker,value,index){
-            console.log(index);
             this.localGender = index
         }
     },
